@@ -100,7 +100,7 @@ class ListViewModel: ObservableObject {
         isLoading = true
         if !searchTerm.isEmpty {
             request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchTerm)
-            request.fetchLimit = 20000
+            request.fetchLimit = 30000
         }
         
         filteredCitiesCD = []

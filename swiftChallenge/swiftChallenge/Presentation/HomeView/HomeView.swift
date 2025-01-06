@@ -15,7 +15,6 @@ struct HomeView: View {
             if orientation.isPortrait {
                PortraitView()
             } else if orientation.isLandscape {
-                //LandscapeView(selectedItem: City(context: PersistanceController.shared.container.viewContext))
                 LandscapeView()
             } else if orientation.isFlat {
                 Text("Flat")

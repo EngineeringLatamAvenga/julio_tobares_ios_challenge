@@ -12,6 +12,7 @@ struct LandscapeView: View {
     @EnvironmentObject var viewModel: ListViewModel
     @State private var searchTerm: String = ""
     @State var selectedItem: City?
+    @State private var showSheet: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -26,55 +27,33 @@ struct LandscapeView: View {
                             }
                         SearchBar(placeholder: "Filter", text: $searchTerm)
                     }
-                    
-                    if viewModel.isShowingFavoritesItems {
-                        List {
-                            ForEach(viewModel.favoriteItems, id: \.objectID) { item in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("\(item.wrappedName), \(String(describing: item.wrappedCountry)) ")
-                                            .font(.headline)
-                                        Text("lat:\(item.wrappedLat) lon:\(item.wrappedLon) ")
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
+                    List {
+                        ForEach(viewModel.isShowingFavoritesItems ? viewModel.favoriteItems : viewModel.filteredCitiesCD, id: \.objectID) { item in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("\(item.wrappedName), \(String(describing: item.wrappedCountry)) ")
+                                        .font(.headline)
+                                    Text("lat:\(item.wrappedLat) lon:\(item.wrappedLon) ")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                }
+                                Spacer()
+                                Image(systemName: viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? "star.fill" : "star")
+                                    .foregroundColor(viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? .yellow : .gray)
+                                    .frame(width: 20.0, height: 20.0)
+                                    .onTapGesture {
+                                        viewModel.handleFavorites(item: item)
                                     }
-                                    Spacer()
-                                    Image(systemName: viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? "star.fill" : "star")
-                                        .foregroundColor(viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? .yellow : .gray)
-                                        .frame(width: 20.0, height: 20.0)
-                                        .onTapGesture {
-                                            viewModel.handleFavorites(item: item)
-                                        }
-                                }
-                                .padding(.vertical, 8)
-                                .onTapGesture {
-                                    selectedItem = item
-                                }
+                                Image(systemName: "info.circle")
+                                    .foregroundColor(.gray)
+                                    .frame(width: 20.0, height: 20.0)
+                                    .onTapGesture {
+                                        showSheet.toggle()
+                                    }
                             }
-                        }
-                    } else {
-                        List {
-                            ForEach(viewModel.filteredCitiesCD, id: \.objectID) { item in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text("\(item.wrappedName), \(String(describing: item.wrappedCountry)) ")
-                                            .font(.headline)
-                                        Text("lat:\(item.wrappedLat) lon:\(item.wrappedLon) ")
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
-                                    }
-                                    Spacer()
-                                    Image(systemName: viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? "star.fill" : "star")
-                                        .foregroundColor(viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? .yellow : .gray)
-                                        .frame(width: 20.0, height: 20.0)
-                                        .onTapGesture {
-                                            viewModel.handleFavorites(item: item)
-                                        }
-                                }
-                                .padding(.vertical, 8)
-                                .onTapGesture {
-                                    selectedItem = item
-                                }
+                            .padding(.vertical, 8)
+                            .onTapGesture {
+                                selectedItem = item
                             }
                         }
                     }
@@ -108,6 +87,22 @@ struct LandscapeView: View {
                 }.frame(width: geometry.size.width * 0.55, height: geometry.size.height * 0.95)
             }
             .ignoresSafeArea(.all, edges: .all)
+        }
+        .sheet(isPresented: $showSheet) {
+            VStack {
+                Text("Meet us!")
+                    .font(.headline)
+                Spacer().frame(height: 10)
+                Text("We can take you to another places with our tastes from Asia")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                Spacer().frame(height: 20)
+                Button("Close") {
+                    showSheet = false
+                }
+            }
+            .presentationDetents([.fraction(0.3), .medium]) // Altura personalizada
+            .presentationDragIndicator(.visible)
         }
     }
 }
