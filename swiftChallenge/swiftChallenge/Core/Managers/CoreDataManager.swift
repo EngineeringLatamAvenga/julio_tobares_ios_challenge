@@ -29,6 +29,15 @@ final class CoreDataManager {
         return []
     }
 
+    func fetchData(request: NSFetchRequest<City>) -> [City] {
+        do {
+            return try self.moc.fetch(request)
+        } catch {
+            print("Error al recuperar las ciudades: \(error.localizedDescription)")
+        }
+        return []
+    }
+    
     func addItem(item: CityItem) {
         let newItem = City(context: moc)
         newItem.name = item.name

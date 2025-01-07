@@ -103,19 +103,12 @@ class swiftChallengeTests: XCTestCase {
         
         //When
         //Fetch entities
-        // viewModel.searchByCD(searchTerm: searchTerm)
         let searchTerm = "Paris"
-        let request = viewModel.createSearchRequest(searchTerm: searchTerm)
-        
-        do {
-            viewModel.filteredCitiesCD = try self.moc.fetch(request)
-        } catch {
-            print("Failed to fetchData")
-        }
+        viewModel.searchByCD(searchTerm: searchTerm)
+        let filteredResults: [City] = viewModel.filteredCitiesCD
         
         //Then
-        let filteredCities = viewModel.filteredCitiesCD
-        XCTAssertEqual(filteredCities.count, 1, "Should be just one matching city: 'Paris'")
-        XCTAssertEqual(filteredCities.first?.name, "Paris", "City should be 'Paris'")
+        XCTAssertEqual(filteredResults.count, 1, "Should be just one matching city: 'Paris'")
+        XCTAssertEqual(filteredResults.first?.name, "Paris", "City should be 'Paris'")
     }
 }

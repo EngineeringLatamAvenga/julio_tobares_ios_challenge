@@ -94,17 +94,14 @@ class ListViewModel: ObservableObject {
     func searchByCD(searchTerm: String) {
         let request = createSearchRequest(searchTerm: searchTerm)
         filteredCitiesCD = []
-        
+        /*
         DispatchQueue.main.async {
-            do {
-                let cities = try self.moc.fetch(request)
-                self.filteredCitiesCD = cities
-                self.isLoading = false
-            } catch {
-                print("Error al recuperar las ciudades: \(error.localizedDescription)")
-                self.isLoading = false
-            }
+            self.filteredCitiesCD = self.cdManager.fetchData(request: request)
+            self.isLoading = false
         }
+         */
+        filteredCitiesCD = cdManager.fetchData(request: request)
+        isLoading = false
     }
     
     func createSearchRequest(searchTerm: String) -> NSFetchRequest<City> {
