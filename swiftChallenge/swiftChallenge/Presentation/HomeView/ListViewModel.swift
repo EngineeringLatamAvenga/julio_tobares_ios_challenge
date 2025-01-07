@@ -92,19 +92,6 @@ class ListViewModel: ObservableObject {
     
     ///Search by CoreData NSPredicate -> Changing the limit of entities
     func searchByCD(searchTerm: String) {
-        let request = createSearchRequest(searchTerm: searchTerm)
-        filteredCitiesCD = []
-        /*
-        DispatchQueue.main.async {
-            self.filteredCitiesCD = self.cdManager.fetchData(request: request)
-            self.isLoading = false
-        }
-         */
-        filteredCitiesCD = cdManager.fetchData(request: request)
-        isLoading = false
-    }
-    
-    func createSearchRequest(searchTerm: String) -> NSFetchRequest<City> {
         let request: NSFetchRequest<City> = City.fetchRequest()
         let sortDescriptor = NSSortDescriptor(keyPath: \City.name, ascending: true)
         request.sortDescriptors = [sortDescriptor]
@@ -114,7 +101,9 @@ class ListViewModel: ObservableObject {
             request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchTerm)
             request.fetchLimit = 20000
         }
-        return request
+        filteredCitiesCD = []
+        filteredCitiesCD = cdManager.fetchData(request: request)
+        isLoading = false
     }
     
     func handleFavorites(item: City) {
