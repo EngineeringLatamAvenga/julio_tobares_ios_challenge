@@ -26,7 +26,7 @@ struct PortraitView: View {
                 }
 
                 List {
-                    ForEach(viewModel.isShowingFavoritesItems ? viewModel.favoriteItems : viewModel.filteredCitiesCD, id: \.objectID) { item in
+                    ForEach(viewModel.isShowingFavoritesItems ? viewModel.favoriteItems.reversed() : viewModel.filteredCitiesCD, id: \.objectID) { item in
                         NavigationLink(destination: MapView(landMark: item)) {
                             HStack {
                                 VStack(alignment: .leading) {
@@ -37,11 +37,16 @@ struct PortraitView: View {
                                         .foregroundColor(.gray)
                                 }
                                 Spacer()
-                                Image(systemName: viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? "star.fill" : "star")
-                                    .foregroundColor(viewModel.favoriteItems.contains(where: { $0.id == item.id }) ? .yellow : .gray)
+                                Image(systemName:  item.isFavorite ? "star.fill" : "star")
+                                    .foregroundColor( item.isFavorite ? .yellow : .gray)
                                     .frame(width: 20.0, height: 20.0)
                                     .onTapGesture {
                                         viewModel.handleFavorites(item: item)
+                                    }
+                                    .onAppear {
+                                        if item.isFavorite {
+                                            viewModel.handleFavorites(item: item)
+                                        }
                                     }
                                 Image(systemName: "info.circle")
                                     .foregroundColor(.gray)
@@ -56,7 +61,7 @@ struct PortraitView: View {
                 }
 
                 if viewModel.isLoading {
-                    ProgressView("Cargando...")
+                    ProgressView("Loading...")
                 }
                 
                 Spacer()

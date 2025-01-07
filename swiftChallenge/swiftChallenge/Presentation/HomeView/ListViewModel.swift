@@ -65,12 +65,13 @@ class ListViewModel: ObservableObject {
     // MARK: - CoreData
     func fetchData() {
         filteredCitiesCD = []
+        favoriteItems = []
         isLoading = true
         DispatchQueue.main.async {
             let result = self.cdManager.fetchData()
             self.filteredCitiesCD = result
             if self.originalCitiesCD.isEmpty {
-                self.originalCitiesCD = result
+                self.originalCitiesCD.append(contentsOf: result)
             }
             self.isLoading = false
         }

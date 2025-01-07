@@ -28,7 +28,7 @@ struct LandscapeView: View {
                         SearchBar(placeholder: "Filter", text: $searchTerm)
                     }
                     List {
-                        ForEach(viewModel.isShowingFavoritesItems ? viewModel.favoriteItems : viewModel.filteredCitiesCD, id: \.objectID) { item in
+                        ForEach(viewModel.isShowingFavoritesItems ? viewModel.favoriteItems.reversed() : viewModel.filteredCitiesCD, id: \.objectID) { item in
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text("\(item.wrappedName), \(String(describing: item.wrappedCountry)) ")
@@ -43,6 +43,11 @@ struct LandscapeView: View {
                                     .frame(width: 20.0, height: 20.0)
                                     .onTapGesture {
                                         viewModel.handleFavorites(item: item)
+                                    }
+                                    .onAppear {
+                                        if item.isFavorite {
+                                            viewModel.handleFavorites(item: item)
+                                        }
                                     }
                                 Image(systemName: "info.circle")
                                     .foregroundColor(.gray)
@@ -59,7 +64,7 @@ struct LandscapeView: View {
                     }
 
                     if viewModel.isLoading {
-                        ProgressView("Cargando...")
+                        ProgressView("Loading...")
                     }
                     
                     Spacer()

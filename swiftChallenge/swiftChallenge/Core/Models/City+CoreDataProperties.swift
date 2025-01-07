@@ -18,13 +18,12 @@ extension City {
 
     @NSManaged public var country: String?
     @NSManaged public var id: Int16
+    @NSManaged public var isFavorite: Bool
     @NSManaged public var lat: Double
     @NSManaged public var lon: Double
     @NSManaged public var name: String?
-    @NSManaged public var isFavorite: Bool
     @NSManaged public var coordinates: Coordinate?
 
-    
     public var wrappedId: Int16 {
         get { id }
     }

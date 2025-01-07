@@ -67,15 +67,14 @@ final class CoreDataManager {
         let sortDescriptor = NSSortDescriptor(keyPath: \City.name, ascending: true)
         request.predicate = NSPredicate(format: "name == %@", name)
         request.sortDescriptors = [sortDescriptor]
-        
+
         do {
             let cities = try moc.fetch(request)
-            
             if let city = cities.first {
                 city.isFavorite = status
-                
+
                 try moc.save()
-                print("City name updated successfully.")
+                print("Favorites updated successfully.")
             } else {
                 print("City not found.")
             }
