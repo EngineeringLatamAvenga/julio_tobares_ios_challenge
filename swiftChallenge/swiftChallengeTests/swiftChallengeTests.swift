@@ -49,13 +49,13 @@ class swiftChallengeTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        // Configurar el stack de Core Data en memoria
+        //SetUp CoreData in memory
         let modelURL = Bundle.main.url(forResource: "CityCD", withExtension: "momd")!
         let mom = NSManagedObjectModel(contentsOf: modelURL)!
         let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
         
         do {
-            let storeURL = URL(fileURLWithPath: "/dev/null") // Usar una ubicación ficticia
+            let storeURL = URL(fileURLWithPath: "/dev/null")
             try psc.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: storeURL, options: nil)
             moc = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             moc.persistentStoreCoordinator = psc
@@ -110,5 +110,42 @@ class swiftChallengeTests: XCTestCase {
         //Then
         XCTAssertEqual(filteredResults.count, 1, "Should be just one matching city: 'Paris'")
         XCTAssertEqual(filteredResults.first?.name, "Paris", "City should be 'Paris'")
+    }
+    
+    func test_searchByCD_withEmptySearchTerm() {
+        // Given
+        //Create entities
+        let city1 = City(context: moc)
+        city1.name = "Paris"
+        city1.country = "FR"
+        city1.lat = 48.85
+        city1.lon = 2.35
+        
+        let city2 = City(context: moc)
+        city2.name = "Madrid"
+        city2.country = "ES"
+        city2.lat = 40.41
+        city2.lon = -3.70
+        
+        let city3 = City(context: moc)
+        city3.name = "London"
+        city3.country = "GB"
+        city3.lat = 51.50
+        city3.lon = -0.12
+        
+        //Save entities
+        do {
+            try moc.save()
+        } catch {
+            print("Failed to add task")
+        }
+        
+        //When
+        //Fetch entities
+        let searchTerm = ""
+        viewModel.searchByCD(searchTerm: searchTerm)
+        let filteredResults: [City] = viewModel.filteredCitiesCD
+        
+        XCTAssertEqual(filteredResults.count, 3, "Should return all entities when searchTerm is empty")
     }
 }
