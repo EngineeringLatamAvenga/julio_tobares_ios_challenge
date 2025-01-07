@@ -94,7 +94,7 @@ struct PortraitView: View {
                         showSheet = false
                     }
                 }
-                .presentationDetents([.fraction(0.3), .medium]) // Altura personalizada
+                .presentationDetents([.fraction(0.3), .medium])
                 .presentationDragIndicator(.visible)
             }
         }

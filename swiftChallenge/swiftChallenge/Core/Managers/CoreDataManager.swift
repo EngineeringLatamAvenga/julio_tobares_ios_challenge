@@ -20,8 +20,11 @@ final class CoreDataManager {
         let request = City.fetchRequest()
         let sortDescriptor = NSSortDescriptor(keyPath: \City.name, ascending: true)
         request.sortDescriptors = [sortDescriptor]
-        if let tasks = try? self.moc.fetch(request) {
-            return tasks
+
+        do {
+            return try self.moc.fetch(request)
+        } catch {
+            print("Failed to fetchData")
         }
         return []
     }

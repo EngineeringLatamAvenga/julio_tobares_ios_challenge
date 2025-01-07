@@ -10,10 +10,9 @@ import Combine
 import CoreData
 
 class ListViewModel: ObservableObject {
-    let moc: NSManagedObjectContext
+    var moc: NSManagedObjectContext
     let cdManager: CoreDataManager
     
-    var orientation: Orientation = .portrait
     var originalCitiesCD: [City] = []
     var subscribers = Set<AnyCancellable>()
     var isFirtsLoading: Bool = true
@@ -66,18 +65,17 @@ class ListViewModel: ObservableObject {
     func fetchData() {
         filteredCitiesCD = []
         favoriteItems = []
+        originalCitiesCD = []
         isLoading = true
         DispatchQueue.main.async {
             let result = self.cdManager.fetchData()
             self.filteredCitiesCD = result
-            if self.originalCitiesCD.isEmpty {
-                self.originalCitiesCD.append(contentsOf: result)
-            }
+            self.originalCitiesCD = result
             self.isLoading = false
         }
     }
     
-    ///Search by Linear Search -> Not efficient
+    ///Search by Linear Search -> Not efficient, just to show don't use it
     func searchByFilterArray(searchTerm: String) {
         let tempArray = filteredCitiesCD
         if !searchTerm.isEmpty {
@@ -94,16 +92,7 @@ class ListViewModel: ObservableObject {
     
     ///Search by CoreData NSPredicate -> Changing the limit of entities
     func searchByCD(searchTerm: String) {
-        let request: NSFetchRequest<City> = City.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(keyPath: \City.name, ascending: true)
-        request.sortDescriptors = [sortDescriptor]
-        request.fetchLimit = 100000
-        isLoading = true
-        if !searchTerm.isEmpty {
-            request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchTerm)
-            request.fetchLimit = 30000
-        }
-        
+        let request = createSearchRequest(searchTerm: searchTerm)
         filteredCitiesCD = []
         
         DispatchQueue.main.async {
@@ -116,6 +105,19 @@ class ListViewModel: ObservableObject {
                 self.isLoading = false
             }
         }
+    }
+    
+    func createSearchRequest(searchTerm: String) -> NSFetchRequest<City> {
+        let request: NSFetchRequest<City> = City.fetchRequest()
+        let sortDescriptor = NSSortDescriptor(keyPath: \City.name, ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+        request.fetchLimit = 130000
+        isLoading = true
+        if !searchTerm.isEmpty {
+            request.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchTerm)
+            request.fetchLimit = 20000
+        }
+        return request
     }
     
     func handleFavorites(item: City) {
